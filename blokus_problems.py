@@ -68,7 +68,7 @@ class BlokusCornersProblem(SearchProblem):
 
     def is_goal_state(self, state):
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # util.raiseNotDefined()
         return -1 not in [state.get_position(state.board_h - 1, state.board_w - 1),
                           state.get_position(state.board_h - 1, 0), state.get_position(0, state.board_w - 1),
                           state.get_position(0, 0)]
@@ -95,7 +95,7 @@ class BlokusCornersProblem(SearchProblem):
         be composed of legal moves
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # util.raiseNotDefined()
         return sum([move.piece.get_num_tiles() for move in actions])
 
 

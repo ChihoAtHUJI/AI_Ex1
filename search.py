@@ -82,7 +82,7 @@ def depth_first_search(problem):
     print("Start's successors:", problem.get_successors(problem.get_start_state()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # util.raiseNotDefined()
     fringe = util.Stack()
     start = problem.get_start_state()
     fringe.push(Node(start))
@@ -109,7 +109,7 @@ def breadth_first_search(problem):
     Search the shallowest nodes in the search tree first.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # util.raiseNotDefined()
     fringe = util.Queue()
     start = problem.get_start_state()
     fringe.push(Node(start))
