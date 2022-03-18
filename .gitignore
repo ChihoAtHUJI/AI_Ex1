@@ -1,4 +1,6 @@
 /docs
+/venv
+/.idea
 /layouts
 /PCF
 __init__.py
