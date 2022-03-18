@@ -49,6 +49,22 @@ class SearchProblem:
         util.raiseNotDefined()
 
 
+class Node:
+    def __init__(self, state, action=None, parent=None, cost_to_here=0, params={}):
+        self.state = state
+        self.action = action
+        self.parent = parent
+        self.cost_to_here = cost_to_here
+        self.params = params
+
+    def get_path(self):
+        path = []
+        node = self
+        while node.parent is not None:
+            path = [node.action] + path
+            node = node.parent
+
+        return path
 
 
 def depth_first_search(problem):
@@ -67,6 +83,25 @@ def depth_first_search(problem):
     """
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
+    fringe = util.Stack()
+    start = problem.get_start_state()
+    fringe.push(Node(start))
+    visited = set()
+
+    while not fringe.isEmpty():
+        node = fringe.pop()
+
+        if problem.is_goal_state(node.state):
+            print("Found solution!\n")
+            return node.get_path()
+        elif node.state not in visited:
+            successors = problem.get_successors(node.state)
+
+            for successor, action, cost in successors:
+                cost_to_here = node.cost_to_here + cost
+                fringe.push(Node(successor, action, node, cost_to_here))
+                visited.add(node.state)
+    return []
 
 
 def breadth_first_search(problem):
@@ -75,6 +110,25 @@ def breadth_first_search(problem):
     """
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
+    fringe = util.Queue()
+    start = problem.get_start_state()
+    fringe.push(Node(start))
+    visited = set()
+
+    while not fringe.isEmpty():
+        node = fringe.pop()
+
+        if problem.is_goal_state(node.state):
+            print("Found solution!\n")
+            return node.get_path()
+        elif node.state not in visited:
+            successors = problem.get_successors(node.state)
+
+            for successor, action, cost in successors:
+                cost_to_here = node.cost_to_here + cost
+                fringe.push(Node(successor, action, node, cost_to_here))
+                visited.add(node.state)
+    return []
 
 
 def uniform_cost_search(problem):
@@ -83,6 +137,8 @@ def uniform_cost_search(problem):
     """
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
+    # ucs is as A* search but with the null heuristic
+    return a_star_search(problem)
 
 
 def null_heuristic(state, problem=None):
@@ -99,6 +155,25 @@ def a_star_search(problem, heuristic=null_heuristic):
     """
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
+    fringe = util.PriorityQueue()
+    start = problem.get_start_state()
+    fringe.push(Node(start), 0)
+    visited = set()
+
+    while not fringe.isEmpty():
+        node = fringe.pop()
+
+        if problem.is_goal_state(node.state):
+            print("Found solution!\n")
+            return node.get_path()
+        elif node.state not in visited:
+            successors = problem.get_successors(node.state)
+
+            for successor, action, cost in successors:
+                cost_to_here = node.cost_to_here + cost
+                fringe.push(Node(successor, action, node, cost_to_here), cost_to_here + heuristic(node.state, problem))
+                visited.add(node.state)
+    return []
 
 
 
