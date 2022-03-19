@@ -50,12 +50,12 @@ class SearchProblem:
 
 
 class Node:
-    def __init__(self, state, action=None, parent=None, cost_to_here=0, params={}):
+    def __init__(self, state, action=None, parent=None, cost_to_here=0):
         self.state = state
         self.action = action
         self.parent = parent
         self.cost_to_here = cost_to_here
-        self.params = params
+        # self.params = params
 
     def get_path(self):
         path = []
