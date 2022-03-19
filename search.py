@@ -101,7 +101,8 @@ def depth_first_search(problem):
                 cost_to_here = node.cost_to_here + cost
                 fringe.push(Node(successor, action, node, cost_to_here))
                 visited.add(node.state)
-    return []
+
+    return None
 
 
 def breadth_first_search(problem):
@@ -121,14 +122,17 @@ def breadth_first_search(problem):
         if problem.is_goal_state(node.state):
             print("Found solution!\n")
             return node.get_path()
+
         elif node.state not in visited:
             successors = problem.get_successors(node.state)
 
             for successor, action, cost in successors:
+            # if successor is not visited:
                 cost_to_here = node.cost_to_here + cost
                 fringe.push(Node(successor, action, node, cost_to_here))
                 visited.add(node.state)
-    return []
+
+    return None
 
 
 def uniform_cost_search(problem):
@@ -136,7 +140,6 @@ def uniform_cost_search(problem):
     Search the node of least total cost first.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
     # ucs is as A* search but with the null heuristic
     return a_star_search(problem)
 
@@ -154,7 +157,6 @@ def a_star_search(problem, heuristic=null_heuristic):
     Search the node that has the lowest combined cost and heuristic first.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
     fringe = util.PriorityQueue()
     start = problem.get_start_state()
     fringe.push(Node(start), 0)
@@ -173,7 +175,7 @@ def a_star_search(problem, heuristic=null_heuristic):
                 cost_to_here = node.cost_to_here + cost
                 fringe.push(Node(successor, action, node, cost_to_here), cost_to_here + heuristic(node.state, problem))
                 visited.add(node.state)
-    return []
+    return None
 
 
 
