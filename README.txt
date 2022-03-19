@@ -2,4 +2,4 @@
 327742151
 *****
 Comments:
-This is the ex1
+Finished questions 2 and 3.
