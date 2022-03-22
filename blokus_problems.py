@@ -101,6 +101,15 @@ class BlokusCornersProblem(SearchProblem):
         return sum([move.piece.get_num_tiles() for move in actions])
 
 
+def get_pieces_on_board(state):
+    pieces = []
+    for i in range(state.board_w):
+        for j in range(state.board_h):
+            if state.check_tile_attached(0, i, j):
+                pieces += [[i, j]]
+    return pieces
+
+
 def blokus_corners_heuristic(state, problem):
     """
     Your heuristic for the BlokusCornersProblem goes here.
@@ -114,22 +123,14 @@ def blokus_corners_heuristic(state, problem):
     inadmissible or inconsistent heuristics may find optimal solutions, so be careful.
     """
     "*** YOUR CODE HERE ***"
-    # util.raiseNotDefined()
-    pieces = np.matrix(np.where(state.state == 0)).T
-    curr1 = 100
-    curr2 = 100
-    curr3 = 100
-    curr4 = 100
+    pieces = get_pieces_on_board(state)
+    curr = [100, 100, 100]
     for tile in pieces:
-        a_1 = min(util.manhattanDistance([state.board_h -1, state.board_w -1], tile), curr1)
-        a_2 = min(util.manhattanDistance([0,0], tile), curr2)
-        a_3 = min(util.manhattanDistance([0, state.board_w-1], curr3))
-        a_4 = min(util.manhattanDistance([state.board_w-1, 0], curr4))
-        curr1 = a_1
-        curr2 = a_2
-        curr3 = a_3
-        curr4 = a_4
-    return curr1+curr2+curr3+curr4
+        a_1 = min(util.manhattanDistance([state.board_h -1, state.board_w -1], tile), curr[0])
+        a_3 = min(util.manhattanDistance([0, state.board_w-1], tile), curr[1])
+        a_4 = min(util.manhattanDistance([state.board_w-1, 0], tile), curr[2])
+        curr = [a_1, a_3, a_4]
+    return sum(curr)
 
 class BlokusCoverProblem(SearchProblem):
     def __init__(self, board_w, board_h, piece_list, starting_point=(0, 0), targets=[(0, 0)]):
