@@ -2,6 +2,8 @@ from board import Board
 from search import SearchProblem, ucs
 import util
 
+import numpy as np
+
 
 class BlokusFillProblem(SearchProblem):
     """
@@ -112,8 +114,22 @@ def blokus_corners_heuristic(state, problem):
     inadmissible or inconsistent heuristics may find optimal solutions, so be careful.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-
+    # util.raiseNotDefined()
+    pieces = np.matrix(np.where(state.state == 0)).T
+    curr1 = 100
+    curr2 = 100
+    curr3 = 100
+    curr4 = 100
+    for tile in pieces:
+        a_1 = min(util.manhattanDistance([state.board_h -1, state.board_w -1], tile), curr1)
+        a_2 = min(util.manhattanDistance([0,0], tile), curr2)
+        a_3 = min(util.manhattanDistance([0, state.board_w-1], curr3))
+        a_4 = min(util.manhattanDistance([state.board_w-1, 0], curr4))
+        curr1 = a_1
+        curr2 = a_2
+        curr3 = a_3
+        curr4 = a_4
+    return curr1+curr2+curr3+curr4
 
 class BlokusCoverProblem(SearchProblem):
     def __init__(self, board_w, board_h, piece_list, starting_point=(0, 0), targets=[(0, 0)]):
@@ -159,6 +175,11 @@ class BlokusCoverProblem(SearchProblem):
 def blokus_cover_heuristic(state, problem):
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
+
+
+
+
+
 
 
 class ClosestLocationSearch:
