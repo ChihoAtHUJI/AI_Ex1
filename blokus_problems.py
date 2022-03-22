@@ -147,7 +147,7 @@ class BlokusCoverProblem(SearchProblem):
 
     def is_goal_state(self, state):
         "*** YOUR CODE HERE ***"
-        return -1 not in [state.get_position(target[0], target[1]) for target in self.targets]
+        return -1 not in [state.get_position(target[1], target[0]) for target in self.targets]
 
     def get_successors(self, state):
         """
