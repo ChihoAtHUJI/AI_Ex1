@@ -132,11 +132,12 @@ def blokus_corners_heuristic(state, problem):
         curr = [a_1, a_3, a_4]
     return sum(curr)
 
+
 class BlokusCoverProblem(SearchProblem):
     def __init__(self, board_w, board_h, piece_list, starting_point=(0, 0), targets=[(0, 0)]):
         self.targets = targets.copy()
         self.expanded = 0
-        "*** YOUR CODE HERE ***"
+        self.board = Board(board_w, board_h, 1, piece_list, starting_point)
 
     def get_start_state(self):
         """
@@ -146,7 +147,7 @@ class BlokusCoverProblem(SearchProblem):
 
     def is_goal_state(self, state):
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return -1 not in [state.get_position(target[0], target[1]) for target in self.targets]
 
     def get_successors(self, state):
         """
@@ -170,7 +171,7 @@ class BlokusCoverProblem(SearchProblem):
         be composed of legal moves
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return sum([move.piece.get_num_tiles() for move in actions])
 
 
 def blokus_cover_heuristic(state, problem):
