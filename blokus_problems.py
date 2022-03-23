@@ -176,7 +176,24 @@ class BlokusCoverProblem(SearchProblem):
 
 def blokus_cover_heuristic(state, problem):
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    pieces = get_pieces_on_board(state)
+    targets = problem.targets
+
+    a = [0 for i in range(len(targets))]
+    curr = [100 for i in range(len(targets))]
+    i = 0
+    for x, y in targets:
+        for piece in pieces:
+            a[i] = min(util.manhattanDistance([x, y], piece), curr[i])
+            curr[i] = a[i]
+        i += 1
+
+    return sum(curr)
+
+
+
+
+
 
 
 
