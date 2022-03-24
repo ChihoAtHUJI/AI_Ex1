@@ -1,7 +1,8 @@
+from turtle import distance
 from board import Board
 from search import SearchProblem, ucs
 import util
-
+import math
 import numpy as np
 
 
@@ -57,7 +58,7 @@ class BlokusFillProblem(SearchProblem):
 # This portion is incomplete.  Time to write code!  #
 #####################################################
 class BlokusCornersProblem(SearchProblem):
-    def __init__(self, board_w, board_h, piece_list, starting_point=(0, 0)):
+    def __init__(self, board_w, board_h, piece_list, starting_point=(0, 0), targets=[(0,0)]):
         self.expanded = 0
         "*** YOUR CODE HERE ***"
         self.board = Board(board_w, board_h, 1, piece_list, starting_point)
@@ -123,14 +124,18 @@ def blokus_corners_heuristic(state, problem):
     inadmissible or inconsistent heuristics may find optimal solutions, so be careful.
     """
     "*** YOUR CODE HERE ***"
-    pieces = get_pieces_on_board(state)
-    curr = [100, 100, 100]
-    for tile in pieces:
-        a_1 = min(util.manhattanDistance([state.board_h -1, state.board_w -1], tile), curr[0])
-        a_3 = min(util.manhattanDistance([0, state.board_w-1], tile), curr[1])
-        a_4 = min(util.manhattanDistance([state.board_w-1, 0], tile), curr[2])
-        curr = [a_1, a_3, a_4]
-    return sum(curr)
+    # the first heuristic function
+
+    # pieces = get_pieces_on_board(state)
+    # curr = [100, 100, 100]
+    # for tile in pieces:
+    #     a_1 = min(util.manhattanDistance([state.board_h -1, state.board_w -1], tile), curr[0])
+    #     a_3 = min(util.manhattanDistance([0, state.board_w-1], tile), curr[1])
+    #     a_4 = min(util.manhattanDistance([state.board_w-1, 0], tile), curr[2])
+    #     curr = [a_1, a_3, a_4]
+    # return sum(curr)
+    problem.targets = [(0,0), (0, state.board_w-1), (state.board_w-1, 0), (state.board_h -1, state.board_w -1)]
+    return blokus_cover_heuristic(state, problem)
 
 
 class BlokusCoverProblem(SearchProblem):
@@ -176,28 +181,26 @@ class BlokusCoverProblem(SearchProblem):
 
 def blokus_cover_heuristic(state, problem):
     "*** YOUR CODE HERE ***"
-    pieces = get_pieces_on_board(state)
-    targets = problem.targets
+    tiles = np.matrix(np.where(state.state == 0)).T
+    total = 0
+    for target in problem.targets:
+        distance = abs(tiles - target)
+        if distance.size == 0:  # if there aren't any distances
+            return math.inf
+        manhattan_dist = distance[:, 0] + distance[:, 1]
+        condition = np.matrix(np.where(np.squeeze(np.array(manhattan_dist)) == np.min(manhattan_dist))).T # returns only the distances that are equal to the min distance
+        min_values = distance[condition].tolist()
+        value = np.min(manhattan_dist)
 
-    a = [0 for i in range(len(targets))]
-    curr = [100 for i in range(len(targets))]
-    i = 0
-    for x, y in targets:
-        for piece in pieces:
-            a[i] = min(util.manhattanDistance([x, y], piece), curr[i])
-            curr[i] = a[i]
-        i += 1
+        if value == 1:
+            return math.inf
+        if any(t in min_values for t in [[value, 0], [0, value]]):
+            total += 1
+        else:
+            total -= 1
+        total += value
 
-    return sum(curr)
-
-
-
-
-
-
-
-
-
+    return total
 
 
 
