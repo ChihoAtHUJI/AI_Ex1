@@ -187,6 +187,7 @@ def blokus_cover_heuristic(state, problem):
         distance = abs(tiles - target)
         if distance.size == 0:  # if there aren't any distances
             return math.inf
+
         manhattan_dist = distance[:, 0] + distance[:, 1]
         condition = np.matrix(np.where(np.squeeze(np.array(manhattan_dist)) == np.min(manhattan_dist))).T # returns only the distances that are equal to the min distance
         min_values = distance[condition].tolist()
@@ -214,6 +215,7 @@ class ClosestLocationSearch:
         self.expanded = 0
         self.targets = targets.copy()
         "*** YOUR CODE HERE ***"
+        self.board = Board(board_w, board_h, 1, piece_list, starting_point)
 
     def get_start_state(self):
         """
@@ -241,7 +243,14 @@ class ClosestLocationSearch:
         return backtrace
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # util.raiseNotDefined()
+        current_state = self.board.__copy__()
+        targets = self.targets
+        backtrace = []
+        for target in targets:
+            print(current_state.get_legal_moves(0))
+        # util.nearestPoint(targets)
+        return backtrace
 
 
 
@@ -264,3 +273,7 @@ class MiniContestSearch:
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
 
+
+# ============ added function ================ #
+def uclid_dist(x,y):
+    return x**2 + y**2
