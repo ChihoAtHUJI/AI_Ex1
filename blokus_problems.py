@@ -1,7 +1,7 @@
 from cmath import sqrt
 from turtle import distance
 from board import Board
-from search import SearchProblem, ucs
+from search import SearchProblem, ucs, astar
 import util
 import math
 import numpy as np
@@ -213,7 +213,8 @@ class ClosestLocationSearch:
 
     def __init__(self, board_w, board_h, piece_list, starting_point=(0, 0), targets=(0, 0)):
         self.expanded = 0
-        self.targets = targets.copy()
+        self.targets = targets
+        self.starting_point = starting_point
         "*** YOUR CODE HERE ***"
         self.board = Board(board_w, board_h, 1, piece_list, starting_point)
 
@@ -234,7 +235,7 @@ class ClosestLocationSearch:
         remaining_targets = [(x, y) for x, y in self.targets if state.get_position(y, x) == -1]
         if len(remaining_targets) == 0:
             return -1, -1
-        distances = [0 for i in range(remaining_targets)]
+        distances = [0 for i in self.targets]
         for i, target in [len(remaining_targets), remaining_targets]:
             distances[i] = uclid_dist(target, start_point)
 
@@ -260,9 +261,32 @@ class ClosestLocationSearch:
         return backtrace
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        result = []
+        targets = self.targets
+        point = self.starting_point
+        problem = BlokusCoverProblem(self.board.board_w, self.board.board_h, self.board.piece_list, self.starting_point, self.targets)
+        while targets:
+            close = []
+            for nearPoint in targets:
+                if not close:
+                    close.append(nearPoint)
+                if util.manhattanDistance(point, close[-1]) > util.manhattanDistance(point, nearPoint):
+                    close.append(nearPoint)
+            target = close[-1]
+            problem.targets = [target]
+            actions = astar(problem, blokus_cover_heuristic)
+            for action in actions:
+                problem.board.add_move(0, action)
+            result += actions
+            point = target
+            targets.remove(target)
+            print(problem.expanded)
 
-
+        # print(problem.board)
+        # print(self.board)
+        # self.board = problem.board.__copy__()
+        # print(result)
+        return result
 
 class MiniContestSearch:
     """
