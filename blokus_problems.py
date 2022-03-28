@@ -1,3 +1,4 @@
+from cmath import sqrt
 from turtle import distance
 from board import Board
 from search import SearchProblem, ucs
@@ -214,12 +215,30 @@ class ClosestLocationSearch:
         self.expanded = 0
         self.targets = targets.copy()
         "*** YOUR CODE HERE ***"
+        self.board = Board(board_w, board_h, 1, piece_list, starting_point)
 
     def get_start_state(self):
         """
         Returns the start state for the search problem
         """
         return self.board
+
+    def get_successors(self, state):
+        self.expanded += 1
+        return [(state.do_move(0, move), move, move.piece.get_num_tiles()) for move in state.get_legal_moves(0)]
+
+    def is_goal_state(self, state):
+        return -1 not in [state.get_position(target[1], target[0]) for target in self.targets]
+
+    def closest_target(self, state, start_point):
+        remaining_targets = [(x, y) for x, y in self.targets if state.get_position(y, x) == -1]
+        if len(remaining_targets) == 0:
+            return -1, -1
+        distances = [0 for i in range(remaining_targets)]
+        for i, target in [len(remaining_targets), remaining_targets]:
+            distances[i] = uclid_dist(target, start_point)
+
+        return remaining_targets[distances.index(min(distances))]
 
     def solve(self):
         """
@@ -264,3 +283,5 @@ class MiniContestSearch:
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
 
+def uclid_dist(xy1,xy2):
+    return sqrt(pow(xy1[0] -xy2[0], 2) + pow(xy1[1] -xy2[1], 2))
