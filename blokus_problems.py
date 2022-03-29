@@ -197,9 +197,16 @@ def blokus_cover_heuristic(state, problem):
         if distance.size == 0:  # if there aren't any distances
             value = max(abs(target[0]-startingPt[0]), abs(target[1]-startingPt[1]))
         else:
-            king_dist = distance.max(axis=1)
+            max_val = distance.max(axis=1)
+            # king_dist = distance.max(axis=1)
+            king_dist = max_val / distance.sum()
             value = np.min(king_dist)
         total += value
+        
+    print(total)
+
+    if total + state.score(0) > 19:
+        print("no!!!")
     return total
 
 

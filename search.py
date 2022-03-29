@@ -94,11 +94,10 @@ def depth_first_search(problem):
         if problem.is_goal_state(node.state):
             print("Found solution!\n")
             return node.get_path()
-        # elif node.state not in visited:
-        successors = problem.get_successors(node.state)
+        elif node.state not in visited:
+            successors = problem.get_successors(node.state)
 
-        for successor, action, cost in successors:
-            if successor not in visited:
+            for successor, action, cost in successors:
                 cost_to_here = node.cost_to_here + cost
                 fringe.push(Node(successor, action, node, cost_to_here))
                 visited.add(node.state)
@@ -123,11 +122,10 @@ def breadth_first_search(problem):
             print("Found solution!\n")
             return node.get_path()
 
-        # elif node.state not in visited:
-        successors = problem.get_successors(node.state)
+        elif node.state not in visited:
+            successors = problem.get_successors(node.state)
 
-        for successor, action, cost in successors:
-            if successor not in visited:
+            for successor, action, cost in successors:
                 cost_to_here = node.cost_to_here + cost
                 fringe.push(Node(successor, action, node, cost_to_here))
                 visited.add(node.state)
