@@ -61,6 +61,7 @@ class BlokusFillProblem(SearchProblem):
 class BlokusCornersProblem(SearchProblem):
     def __init__(self, board_w, board_h, piece_list, starting_point=(0, 0), targets=[(0,0)]):
         self.expanded = 0
+        self.starting_point = starting_point
         "*** YOUR CODE HERE ***"
         self.board = Board(board_w, board_h, 1, piece_list, starting_point)
 
@@ -143,6 +144,7 @@ class BlokusCoverProblem(SearchProblem):
     def __init__(self, board_w, board_h, piece_list, starting_point=(0, 0), targets=[(0, 0)]):
         self.targets = targets.copy()
         self.expanded = 0
+        self.starting_point = starting_point
         self.board = Board(board_w, board_h, 1, piece_list, starting_point)
 
     def get_start_state(self):
@@ -184,30 +186,20 @@ class BlokusCoverProblem(SearchProblem):
 def blokus_cover_heuristic(state, problem):
     "*** YOUR CODE HERE ***"
     tiles = np.matrix(np.where(state.state == 0)).T
-    # startingPt = state.
-    print(tiles)
-    total = 0
+    startingPt = problem.starting_point
+    # print(tiles)
+    total = len(problem.targets)
     for target in problem.targets:
+        if not problem.board.check_tile_legal(0, target[0], target[1]):
+            total -= 1
+            continue
         distance = abs(tiles - target)
         if distance.size == 0:  # if there aren't any distances
-            return math.inf
-        king_dist = distance.min(axis=1)
-        # print(king_dist)
-        value = np.min(king_dist)
-
-        # manhattan_dist = distance[:, 0] + distance[:, 1]
-        # condition = np.matrix(np.where(np.squeeze(np.array(manhattan_dist)) == np.min(manhattan_dist))).T # returns only the distances that are equal to the min distance
-        # min_values = distance[condition].tolist()
-        # value = np.min(manhattan_dist)
-
-        # if value == 1:
-        #     return math.inf
-        # if any(t in min_values for t in [[value, 0], [0, value]]):
-        #     total += 1
-        # else:
-        #     total -= 1
+            value = max(abs(target[0]-startingPt[0]), abs(target[1]-startingPt[1]))
+        else:
+            king_dist = distance.max(axis=1)
+            value = np.min(king_dist)
         total += value
-    # print(total)
     return total
 
 
@@ -282,16 +274,16 @@ class ClosestLocationSearch:
             target = close[-1]
             problem.targets = [target]
             actions = astar(problem, blokus_cover_heuristic)
-            print(actions)
+            # print(actions)
             sorted_actions = sorted(actions, key=lambda x: x.piece.get_num_tiles())
 
-            for action in sorted_actions:
+            for action in actions:
                 problem.board.add_move(0, action)
             result += actions
             point = target
             targets.remove(target)
             # print(problem.expanded)
-            # self.expanded += problem.expanded
+            self.expanded += problem.expanded
         return result
 
 class MiniContestSearch:
