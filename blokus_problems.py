@@ -182,6 +182,8 @@ class BlokusCoverProblem(SearchProblem):
         "*** YOUR CODE HERE ***"
         return sum([move.piece.get_num_tiles() for move in actions])
 
+def king_dist(pt1, pt2):
+    return max(abs(pt1[0]-pt2[0]), abs(pt1[1]-pt2[1]))
 
 def blokus_cover_heuristic(state, problem):
     "*** YOUR CODE HERE ***"
@@ -197,17 +199,40 @@ def blokus_cover_heuristic(state, problem):
         if distance.size == 0:  # if there aren't any distances
             value = max(abs(target[0]-startingPt[0]), abs(target[1]-startingPt[1]))
         else:
-            max_val = distance.max(axis=1)
+            king_dist = distance.max(axis=1)
             # king_dist = distance.max(axis=1)
-            king_dist = max_val / distance.sum()
+            # king_dist = max_val / distance.sum()
             value = np.min(king_dist)
         total += value
-        
-    print(total)
-
-    if total + state.score(0) > 19:
-        print("no!!!")
     return total
+    # index = 1
+    # tiles = np.matrix(np.where(state.state == 0)).T
+    # sum_x, sum_y = problem.starting_point
+    # for x, y in problem.targets:
+    #     sum_x += x
+    #     sum_y += y
+    # mean_point = util.nearestPoint((sum_x/(len(problem.targets)+1), sum_y/(len(problem.targets)+1)))
+    # desire_list = [king_dist(mean_point, problem.starting_point)]
+    # for target in problem.targets:
+    #     desire_list.append(king_dist(target, mean_point))
+    # if problem.board.check_tile_legal(0, mean_point[0], mean_point[1]):
+    #     print("first tile")
+    #     distance = abs(tiles - mean_point)
+    #     if distance.size == 0:
+    #         return sum(desire_list)
+    #     king_distance = distance.max(axis=1)
+    #     value = np.min(king_distance)
+    #     desire_list[0] = value
+    # else:
+    #     desire_list[0] = 0
+    #     for target in problem.targets:
+    #         dist = abs(tiles - target)
+    #         king_distance = dist.max(axis=1)
+    #         value = np.min(king_distance)
+    #         if desire_list[index] > value:
+    #             desire_list[index] = value
+    #         index += 1
+    # return sum(desire_list)
 
 
 
