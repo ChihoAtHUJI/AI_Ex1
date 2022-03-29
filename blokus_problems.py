@@ -135,7 +135,7 @@ def blokus_corners_heuristic(state, problem):
     #     a_4 = min(util.manhattanDistance([state.board_w-1, 0], tile), curr[2])
     #     curr = [a_1, a_3, a_4]
     # return sum(curr)
-    problem.targets = [(0,0), (0, state.board_w-1), (state.board_w-1, 0), (state.board_h -1, state.board_w -1)]
+    problem.targets = [(0, state.board_w-1), (state.board_h-1, 0), (state.board_h -1, state.board_w -1)]
     return blokus_cover_heuristic(state, problem)
 
 
@@ -167,7 +167,8 @@ class BlokusCoverProblem(SearchProblem):
         """
         # Note that for the search problem, there is only one player - #0
         self.expanded = self.expanded + 1
-        return [(state.do_move(0, move), move, move.piece.get_num_tiles()) for move in state.get_legal_moves(0)]
+        piece_list = sorted(state.get_legal_moves(0), key= lambda x:x.piece.get_num_tiles())
+        return [(state.do_move(0, move), move, move.piece.get_num_tiles()) for move in piece_list]
 
     def get_cost_of_actions(self, actions):
         """
@@ -183,15 +184,21 @@ class BlokusCoverProblem(SearchProblem):
 def blokus_cover_heuristic(state, problem):
     "*** YOUR CODE HERE ***"
     tiles = np.matrix(np.where(state.state == 0)).T
+    # startingPt = state.
+    print(tiles)
     total = 0
     for target in problem.targets:
         distance = abs(tiles - target)
         if distance.size == 0:  # if there aren't any distances
             return math.inf
-        manhattan_dist = distance[:, 0] + distance[:, 1]
+        king_dist = distance.min(axis=1)
+        # print(king_dist)
+        value = np.min(king_dist)
+
+        # manhattan_dist = distance[:, 0] + distance[:, 1]
         # condition = np.matrix(np.where(np.squeeze(np.array(manhattan_dist)) == np.min(manhattan_dist))).T # returns only the distances that are equal to the min distance
         # min_values = distance[condition].tolist()
-        value = np.min(manhattan_dist)
+        # value = np.min(manhattan_dist)
 
         # if value == 1:
         #     return math.inf
@@ -200,7 +207,7 @@ def blokus_cover_heuristic(state, problem):
         # else:
         #     total -= 1
         total += value
-
+    # print(total)
     return total
 
 
@@ -275,18 +282,16 @@ class ClosestLocationSearch:
             target = close[-1]
             problem.targets = [target]
             actions = astar(problem, blokus_cover_heuristic)
-            for action in actions:
+            print(actions)
+            sorted_actions = sorted(actions, key=lambda x: x.piece.get_num_tiles())
+
+            for action in sorted_actions:
                 problem.board.add_move(0, action)
             result += actions
             point = target
             targets.remove(target)
-            print(problem.expanded)
-            self.expanded += problem.expanded
-
-        # print(problem.board)
-        # print(self.board)
-        # self.board = problem.board.__copy__()
-        # print(result)
+            # print(problem.expanded)
+            # self.expanded += problem.expanded
         return result
 
 class MiniContestSearch:
