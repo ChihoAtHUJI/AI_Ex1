@@ -189,16 +189,16 @@ def blokus_cover_heuristic(state, problem):
         if distance.size == 0:  # if there aren't any distances
             return math.inf
         manhattan_dist = distance[:, 0] + distance[:, 1]
-        condition = np.matrix(np.where(np.squeeze(np.array(manhattan_dist)) == np.min(manhattan_dist))).T # returns only the distances that are equal to the min distance
-        min_values = distance[condition].tolist()
+        # condition = np.matrix(np.where(np.squeeze(np.array(manhattan_dist)) == np.min(manhattan_dist))).T # returns only the distances that are equal to the min distance
+        # min_values = distance[condition].tolist()
         value = np.min(manhattan_dist)
 
-        if value == 1:
-            return math.inf
-        if any(t in min_values for t in [[value, 0], [0, value]]):
-            total += 1
-        else:
-            total -= 1
+        # if value == 1:
+        #     return math.inf
+        # if any(t in min_values for t in [[value, 0], [0, value]]):
+        #     total += 1
+        # else:
+        #     total -= 1
         total += value
 
     return total
@@ -281,6 +281,7 @@ class ClosestLocationSearch:
             point = target
             targets.remove(target)
             print(problem.expanded)
+            self.expanded += problem.expanded
 
         # print(problem.board)
         # print(self.board)
