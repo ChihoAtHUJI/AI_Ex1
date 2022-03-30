@@ -170,7 +170,7 @@ def a_star_search(problem, heuristic=null_heuristic):
             successors = problem.get_successors(node.state)
             for successor, action, cost in successors:
                 cost_to_here = node.cost_to_here + cost
-                fringe.push(Node(successor, action, node, cost_to_here), cost_to_here + heuristic(node.state, problem))
+                fringe.push(Node(successor, action, node, cost_to_here), float(cost_to_here + heuristic(node.state, problem)))
                 visited.add(node.state)
     return None
 

@@ -142,7 +142,7 @@ def blokus_corners_heuristic(state, problem):
 
 class BlokusCoverProblem(SearchProblem):
     def __init__(self, board_w, board_h, piece_list, starting_point=(0, 0), targets=[(0, 0)]):
-        self.targets = targets.copy()
+        self.targets = targets
         self.expanded = 0
         self.starting_point = starting_point
         self.board = Board(board_w, board_h, 1, piece_list, starting_point)
@@ -169,8 +169,8 @@ class BlokusCoverProblem(SearchProblem):
         """
         # Note that for the search problem, there is only one player - #0
         self.expanded = self.expanded + 1
-        piece_list = sorted(state.get_legal_moves(0), key= lambda x:x.piece.get_num_tiles())
-        return [(state.do_move(0, move), move, move.piece.get_num_tiles()) for move in piece_list]
+        # piece_list = sorted(state.get_legal_moves(0), key= lambda x:x.piece.get_num_tiles())
+        return [(state.do_move(0, move), move, move.piece.get_num_tiles()) for move in state.get_legal_moves(0)]
 
     def get_cost_of_actions(self, actions):
         """
@@ -189,50 +189,45 @@ def blokus_cover_heuristic(state, problem):
     "*** YOUR CODE HERE ***"
     tiles = np.matrix(np.where(state.state == 0)).T
     startingPt = problem.starting_point
-    # print(tiles)
-    total = len(problem.targets)
-    for target in problem.targets:
-        if not problem.board.check_tile_legal(0, target[0], target[1]):
-            total -= 1
-            continue
-        distance = abs(tiles - target)
-        if distance.size == 0:  # if there aren't any distances
-            value = max(abs(target[0]-startingPt[0]), abs(target[1]-startingPt[1]))
-        else:
-            king_dist = distance.max(axis=1)
-            # king_dist = distance.max(axis=1)
-            # king_dist = max_val / distance.sum()
-            value = np.min(king_dist)
-        total += value
-    return total
-    # index = 1
-    # tiles = np.matrix(np.where(state.state == 0)).T
-    # sum_x, sum_y = problem.starting_point
+    # # print(tiles)
+    # sum_x = 0
+    # sum_y = 0
+    # mean_point = None
     # for x, y in problem.targets:
     #     sum_x += x
     #     sum_y += y
-    # mean_point = util.nearestPoint((sum_x/(len(problem.targets)+1), sum_y/(len(problem.targets)+1)))
-    # desire_list = [king_dist(mean_point, problem.starting_point)]
+    # mean_point = util.nearestPoint([sum_x/len(problem.targets), sum_y/len(problem.targets)])
+    #
+    # bound = max(abs(mean_point[0] - startingPt[0]), abs(mean_point[1] - startingPt[1]))
     # for target in problem.targets:
-    #     desire_list.append(king_dist(target, mean_point))
-    # if problem.board.check_tile_legal(0, mean_point[0], mean_point[1]):
-    #     print("first tile")
-    #     distance = abs(tiles - mean_point)
-    #     if distance.size == 0:
-    #         return sum(desire_list)
-    #     king_distance = distance.max(axis=1)
-    #     value = np.min(king_distance)
-    #     desire_list[0] = value
-    # else:
-    #     desire_list[0] = 0
-    #     for target in problem.targets:
-    #         dist = abs(tiles - target)
-    #         king_distance = dist.max(axis=1)
-    #         value = np.min(king_distance)
-    #         if desire_list[index] > value:
-    #             desire_list[index] = value
-    #         index += 1
-    # return sum(desire_list)
+    #     bound += max(abs(mean_point[0] - target[0]), abs(mean_point[1] - target[1]))
+
+    num_target_remain = len(problem.targets)
+    total = 0
+    result = [0]
+    for target in problem.targets:
+        if not state.check_tile_legal(0, target[0], target[1]):
+
+            num_target_remain -= 1
+            # print(num_target_remain , "ho!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            if num_target_remain == 0:
+                # util.pause()
+                return 0
+            continue
+        distance = abs(tiles - target)
+        # print(distance)
+        if distance.size == 0:  # if there aren't any distances
+            value = max(abs(target[0]-startingPt[0]), abs(target[1]-startingPt[1]))
+            # value = util.manhattanDistance(target, startingPt)
+        else:
+            king_dist = distance.max(axis=1)
+            man_dist = np.sum(distance)
+            value = np.min(king_dist)
+        result.append(value)
+        # total += value
+    # if bound < total:
+    #     return bound
+    return max(result)
 
 
 
@@ -306,15 +301,12 @@ class ClosestLocationSearch:
             target = close[-1]
             problem.targets = [target]
             actions = astar(problem, blokus_cover_heuristic)
-            # print(actions)
-            sorted_actions = sorted(actions, key=lambda x: x.piece.get_num_tiles())
-
             for action in actions:
-                problem.board.add_move(0, action)
+                print(problem.board.add_move(0, action))
             result += actions
             point = target
             targets.remove(target)
-            # print(problem.expanded)
+            print(problem.expanded)
             self.expanded += problem.expanded
         return result
 
