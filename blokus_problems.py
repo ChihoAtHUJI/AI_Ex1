@@ -154,7 +154,7 @@ def blokus_corners_heuristic(state, problem):
     for target in problem.targets:
         if not state.check_tile_legal(0, target[0], target[1]):
             num_target_remain -= 1
-            print(num_target_remain, "ho!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            # print(num_target_remain, "ho!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         distance = abs(tiles - target)
         if distance.size == 0:  # if there aren't any distances
             value = max(abs(target[0] - startingPt[0]), abs(target[1] - startingPt[1]))
@@ -236,7 +236,7 @@ def blokus_cover_heuristic(state, problem):
     for target in problem.targets:
         if not state.check_tile_legal(0, target[0], target[1]):
             num_target_remain -= 1
-            print(num_target_remain , "ho!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            # print(num_target_remain , "ho!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         distance = abs(tiles - target)
         if distance.size == 0:  # if there aren't any distances
             value = max(abs(target[0]-startingpt[0]), abs(target[1]-startingpt[1]))
@@ -276,15 +276,18 @@ class ClosestLocationSearch:
     def is_goal_state(self, state):
         return -1 not in [state.get_position(target[1], target[0]) for target in self.targets]
 
-    def closest_target(self, state, start_point):
-        remaining_targets = [(x, y) for x, y in self.targets if state.get_position(y, x) == -1]
-        if len(remaining_targets) == 0:
-            return -1, -1
-        distances = [0 for i in self.targets]
-        for i, target in [len(remaining_targets), remaining_targets]:
-            distances[i] = uclid_dist(target, start_point)
-
-        return remaining_targets[distances.index(min(distances))]
+    def closest_target(self, state, targets):
+        min_dist = state.board_w * state.board_h
+        closest_target = targets[0]
+        for target in targets:
+            for x in range(state.board_w):
+                for y in range(state.board_h):
+                    if state.check_tile_legal(0, x, y) and state.connected[0][y][x]:  # if legal
+                        dist = math.sqrt((target[0] - y) ** 2 + (target[1] - x) ** 2) / 2 # dist for new target
+                        if dist < min_dist:
+                            min_dist = dist
+                            closest_target = target
+        return closest_target
 
     def solve(self):
         """
@@ -306,28 +309,42 @@ class ClosestLocationSearch:
         return backtrace
         """
         "*** YOUR CODE HERE ***"
-        result = []
-        targets = self.targets
-        point = self.starting_point
-        problem = BlokusCoverProblem(self.board.board_w, self.board.board_h, self.board.piece_list, self.starting_point, self.targets)
-        while targets:
-            close = []
-            for nearPoint in targets:
-                if not close:
-                    close.append(nearPoint)
-                if util.manhattanDistance(point, close[-1]) > util.manhattanDistance(point, nearPoint):
-                    close.append(nearPoint)
-            target = close[-1]
-            problem.targets = [target]
-            actions = astar(problem, blokus_cover_heuristic)
-            for action in actions:
-                print(problem.board.add_move(0, action))
-            result += actions
-            point = target
-            targets.remove(target)
-            print(problem.expanded)
+        # result = []
+        # targets = self.targets
+        # point = self.starting_point
+        # problem = BlokusCoverProblem(self.board.board_w, self.board.board_h, self.board.piece_list, self.starting_point, self.targets)
+        # while targets:
+        #     close = []
+        #     for nearPoint in targets:
+        #         if not close:
+        #             close.append(nearPoint)
+        #         if util.manhattanDistance(point, close[-1]) > util.manhattanDistance(point, nearPoint):
+        #             close.append(nearPoint)
+        #     target = close[-1]
+        #     problem.targets = [target]
+        #     actions = ucs(problem)
+        #     for action in actions:
+        #         print(problem.board.add_move(0, action))
+        #     result += actions
+        #     point = target
+        #     targets.remove(target)
+        #     print(problem.expanded)
+        #     self.expanded += problem.expanded
+        # return result
+
+        state = self.board.__copy__()
+        backtrace = []
+        while self.targets:
+            target = self.closest_target(state, self.targets)
+            self.targets.remove(target)
+            problem = BlokusCoverProblem(state.board_w, state.board_h, state.piece_list, self.starting_point, [target])
+            problem.board = state
+            moves = ucs(problem)
+            for move in moves:
+                state = state.do_move(0, move)
+                backtrace.append(move)
             self.expanded += problem.expanded
-        return result
+        return backtrace
 
 class MiniContestSearch:
     """
