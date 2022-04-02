@@ -4,6 +4,7 @@
 /.idea
 /layouts
 /PCF
+.DS_Store
 __init__.py
 blokus.html
 displays.py
