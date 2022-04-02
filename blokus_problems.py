@@ -266,7 +266,7 @@ class ClosestLocationSearch:
             for x in range(state.board_w):
                 for y in range(state.board_h):
                     if state.check_tile_legal(0, x, y) and state.connected[0][y][x]:  # if legal
-                        dist = math.sqrt((target[0] - y) ** 2 + (target[1] - x) ** 2) / 2 # dist for new target
+                        dist = uclid_dist(target, (x, y)) # distance for target
                         if dist < min_dist:
                             min_dist = dist
                             closest_target = target
@@ -316,7 +316,7 @@ class ClosestLocationSearch:
         # return result
 
         state = self.board.__copy__()
-        backtrace = []
+        path = []
         while self.targets:
             target = self.closest_target(state, self.targets)
             self.targets.remove(target)
@@ -325,9 +325,9 @@ class ClosestLocationSearch:
             moves = ucs(problem)
             for move in moves:
                 state = state.do_move(0, move)
-                backtrace.append(move)
+                path.append(move)
             self.expanded += problem.expanded
-        return backtrace
+        return path
 
 class MiniContestSearch:
     """
@@ -349,4 +349,4 @@ class MiniContestSearch:
         util.raiseNotDefined()
 
 def uclid_dist(xy1,xy2):
-    return sqrt(pow(xy1[0] -xy2[0], 2) + pow(xy1[1] -xy2[1], 2))
+    return (xy1[0] -xy2[0])**2 + (xy1[1] -xy2[1])**2
