@@ -127,25 +127,10 @@ def blokus_corners_heuristic(state, problem):
     """
     "*** YOUR CODE HERE ***"
     # the first heuristic function
-
-    # pieces = get_pieces_on_board(state)
-    # curr = [100, 100, 100]
-    # for tile in pieces:
-    #     a_1 = min(util.manhattanDistance([state.board_h -1, state.board_w -1], tile), curr[0])
-    #     a_3 = min(util.manhattanDistance([0, state.board_w-1], tile), curr[1])
-    #     a_4 = min(util.manhattanDistance([state.board_w-1, 0], tile), curr[2])
-    #     curr = [a_1, a_3, a_4]
-    # return sum(curr)
     problem.targets = [(0, state.board_w-1), (state.board_h-1, 0), (state.board_h -1, state.board_w -1)]
     tiles = np.matrix(np.where(state.state == 0)).T
     startingPt = problem.starting_point
-    # lst = problem.targets.copy()
-    # lst.append(startingPt)
-    # lst.sort(key=lambda s: s[0])
-    # bound = lst[-1][0] - lst[0][0]
-    # lst.sort(key=lambda s: s[1])
-    # if bound < lst[-1][1] - lst[0][1]:
-    #     bound = lst[-1][1] - lst[0][1]
+
     bound = state.board_h + state.board_w
 
     num_target_remain = len(problem.targets)
@@ -214,8 +199,6 @@ def king_dist(pt1, pt2):
     return max(abs(pt1[0]-pt2[0]), abs(pt1[1]-pt2[1]))
 
 
-# def king_dist(param, param1):
-#     pass
 
 
 def blokus_cover_heuristic(state, problem):
