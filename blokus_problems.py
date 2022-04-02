@@ -1,9 +1,8 @@
 from cmath import sqrt
 from turtle import distance
 from board import Board
-from search import SearchProblem, ucs, astar
+from search import SearchProblem, ucs
 import util
-import math
 import numpy as np
 
 
@@ -133,13 +132,8 @@ def blokus_corners_heuristic(state, problem):
 
     bound = state.board_h + state.board_w
 
-    num_target_remain = len(problem.targets)
     total = 0
-    # result = [0]
     for target in problem.targets:
-        if not state.check_tile_legal(0, target[0], target[1]):
-            num_target_remain -= 1
-            # print(num_target_remain, "ho!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         distance = abs(tiles - target)
         if distance.size == 0:  # if there aren't any distances
             value = max(abs(target[0] - startingPt[0]), abs(target[1] - startingPt[1]))
@@ -150,7 +144,6 @@ def blokus_corners_heuristic(state, problem):
     if bound < total:
         return bound
     return total
-    # return blokus_cover_heuristic(state, problem)
 
 
 class BlokusCoverProblem(SearchProblem):
@@ -195,10 +188,6 @@ class BlokusCoverProblem(SearchProblem):
         "*** YOUR CODE HERE ***"
         return sum([move.piece.get_num_tiles() for move in actions])
 
-def king_dist(pt1, pt2):
-    return max(abs(pt1[0]-pt2[0]), abs(pt1[1]-pt2[1]))
-
-
 
 
 def blokus_cover_heuristic(state, problem):
@@ -213,14 +202,11 @@ def blokus_cover_heuristic(state, problem):
     if bound < lst[-1][1] - lst[0][1]:
         bound = lst[-1][1] - lst[0][1]
 
-    num_target_remain = len(problem.targets)
     total = 0
-    result = [0]
     for target in problem.targets:
-        if not state.check_tile_legal(0, target[0], target[1]):
-            num_target_remain -= 1
-            # print(num_target_remain , "ho!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
         distance = abs(tiles - target)
+
         if distance.size == 0:  # if there aren't any distances
             value = max(abs(target[0]-startingpt[0]), abs(target[1]-startingpt[1]))
         else:
@@ -292,29 +278,6 @@ class ClosestLocationSearch:
         return backtrace
         """
         "*** YOUR CODE HERE ***"
-        # result = []
-        # targets = self.targets
-        # point = self.starting_point
-        # problem = BlokusCoverProblem(self.board.board_w, self.board.board_h, self.board.piece_list, self.starting_point, self.targets)
-        # while targets:
-        #     close = []
-        #     for nearPoint in targets:
-        #         if not close:
-        #             close.append(nearPoint)
-        #         if util.manhattanDistance(point, close[-1]) > util.manhattanDistance(point, nearPoint):
-        #             close.append(nearPoint)
-        #     target = close[-1]
-        #     problem.targets = [target]
-        #     actions = ucs(problem)
-        #     for action in actions:
-        #         print(problem.board.add_move(0, action))
-        #     result += actions
-        #     point = target
-        #     targets.remove(target)
-        #     print(problem.expanded)
-        #     self.expanded += problem.expanded
-        # return result
-
         state = self.board.__copy__()
         path = []
         while self.targets:
